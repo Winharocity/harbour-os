@@ -23,7 +23,9 @@ RUN set -ux; \
 # ---------- build ----------
 FROM ${NODE_IMAGE} AS builder
 WORKDIR /app
-ENV NEXT_TELEMETRY_DISABLED=1
+# NODE_OPTIONS caps the JS heap so the build survives on small containers
+ENV NEXT_TELEMETRY_DISABLED=1 \
+    NODE_OPTIONS=--max-old-space-size=1024
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 # DATABASE_URL is only needed at runtime; give the build a harmless placeholder
