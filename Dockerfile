@@ -6,12 +6,18 @@ ARG NODE_IMAGE=mirror.gcr.io/library/node:20-alpine
 # ---------- dependencies ----------
 FROM ${NODE_IMAGE} AS deps
 WORKDIR /app
-# package-lock.json is optional: `npm ci` when it exists, `npm install` otherwise
+# package-lock.json is optional. Install strategy: try `npm ci` first; if the
+# lockfile is stale/missing fall back to `npm install`; if registry.npmjs.org
+# is unreachable from the host, fall back to the npmmirror.com registry.
 COPY package.json package-lock.json* ./
-RUN if [ -f package-lock.json ]; then \
-      npm ci --no-audit --no-fund; \
+RUN set -ux; \
+    if [ -f package-lock.json ] && npm ci --no-audit --no-fund; then \
+      echo "[deps] installed with npm ci"; \
+    elif npm install --no-audit --no-fund; then \
+      echo "[deps] installed with npm install"; \
     else \
-      npm install --no-audit --no-fund; \
+      echo "[deps] registry.npmjs.org unreachable — trying npmmirror.com"; \
+      npm install --no-audit --no-fund --registry=https://registry.npmmirror.com; \
     fi
 
 # ---------- build ----------
