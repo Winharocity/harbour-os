@@ -22,11 +22,17 @@ services:
       retries: 12
 
   app:
-    build:
-      context: .
-      args:
-        # Defaults to Google's mirror — override via stack env vars if preferred
-        NODE_IMAGE: ${NODE_IMAGE:-mirror.gcr.io/library/node:20-alpine}
+    # Pre-built by the GitHub Action in .github/workflows/docker-publish.yml —
+    # your host only pulls the finished image (no build, minimal RAM needed).
+    # Set GHCR_OWNER to your GitHub username (lowercase) if different.
+    image: ghcr.io/${GHCR_OWNER:-winharocity}/harbour-os:${IMAGE_TAG:-latest}
+    pull_policy: always
+    #
+    # To build locally instead (strong host only), replace the two lines above with:
+    #   build:
+    #     context: .
+    #     args:
+    #       NODE_IMAGE: ${NODE_IMAGE:-mirror.gcr.io/library/node:20-alpine}
     restart: unless-stopped
     environment:
       # --- required ---
