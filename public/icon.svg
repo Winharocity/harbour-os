@@ -1,5 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Harbour OS icon">
-  <rect width="256" height="256" rx="48" fill="#0f172a"/>
-  <path d="M64 178V78h28l36 48 36-48h28v100h-28V118l-36 48-36-48v60H64Z" fill="#38bdf8"/>
-  <circle cx="184" cy="92" r="18" fill="#22c55e"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="14" fill="#0a1f2e"/>
+  <path d="M33 8v30" stroke="#f5f2e9" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M33 12 52 34H33z" fill="#e8482b"/>
+  <path d="M31 18 16 36h15z" fill="#7fb8c9"/>
+  <path d="M10 44c4.3 3.2 8.7 3.2 13 0 4.3 3.2 8.7 3.2 13 0 4.3 3.2 8.7 3.2 13 0 1.8 1.4 3.7 2.2 5.5 2.4" stroke="#17b0a5" stroke-width="3.4" stroke-linecap="round" fill="none"/>
 </svg>
