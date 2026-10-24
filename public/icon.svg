@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-label="Harbour OS icon">
+  <rect width="256" height="256" rx="48" fill="#0f172a"/>
+  <path d="M64 178V78h28l36 48 36-48h28v100h-28V118l-36 48-36-48v60H64Z" fill="#38bdf8"/>
+  <circle cx="184" cy="92" r="18" fill="#22c55e"/>
+</svg>

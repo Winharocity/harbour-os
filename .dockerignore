@@ -1,0 +1,16 @@
+# Harbour OS
+
+# Docker build context
+node_modules
+.next
+out
+dist
+coverage
+.git
+.gitignore
+npm-debug.log*
+*.log
+.env
+.env.*
+!.env.example
+.DS_Store
