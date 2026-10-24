@@ -1,7 +1,7 @@
-module.exports = {
-  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
-  theme: {
-    extend: {},
+const postcssConfig = {
+  plugins: {
+    "@tailwindcss/postcss": {},
   },
-  plugins: [],
 };
+
+export default postcssConfig;
