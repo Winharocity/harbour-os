@@ -27,11 +27,23 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1 \
     NODE_OPTIONS=--max-old-space-size=1024
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .
+# Copy only what the build needs (Context excludes the rest via .dockerignore)
+COPY package.json package-lock.json* next.config.ts tsconfig.json postcss.config.mjs eslint.config.mjs drizzle.config.json ./
+COPY src ./src
+COPY public ./public
+COPY drizzle ./drizzle
+COPY .env.example ./.env.example
 # DATABASE_URL is only needed at runtime; give the build a harmless placeholder
 ARG DATABASE_URL=postgresql://build:build@127.0.0.1:5432/build
 ENV DATABASE_URL=${DATABASE_URL}
-RUN npm run build
+# Fail loudly and name the exact culprit if the repo upload was incomplete
+RUN echo "==> verifying build inputs:" && \
+    for f in package.json next.config.ts tsconfig.json postcss.config.mjs src/app/globals.css src/app/layout.tsx src/app/page.tsx src/db/schema.ts src/lib/actions.ts; do \
+      test -f "$f" && echo "  ok: $f" || { echo "!!! MISSING: $f (check your GitHub upload — this file didn't reach the repo)"; exit 1; }; \
+    done && \
+    echo "==> node $(node --version), npm $(npm --version)" && \
+    test -d node_modules || { echo "!!! node_modules missing — deps stage failed"; exit 1; } && \
+    npm run build && test -d .next
 
 # ---------- runtime ----------
 FROM ${NODE_IMAGE} AS runner
