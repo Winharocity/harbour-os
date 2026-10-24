@@ -1,28 +1,44 @@
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      PORT: 3000
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/harbour
-    depends_on:
-      - db
-    restart: unless-stopped
+# HARBOUR·OS — self-hosted sailing centre ops
+# Deploy in Portainer as a Stack: paste this file (or point it at your git repo),
+# set the environment variables below in the Portainer stack editor, then deploy.
+#
+# Everything runs on your own hardware. No external accounts needed,
+# the live weather feed uses the free, key-less open-meteo.com API.
 
+services:
   db:
     image: postgres:16-alpine
     restart: unless-stopped
     environment:
-      POSTGRES_DB: harbour
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
+      POSTGRES_USER: ${POSTGRES_USER:-sailing}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-in-portainer}
+      POSTGRES_DB: ${POSTGRES_DB:-sailing}
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - harbour_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-sailing} -d $${POSTGRES_DB:-sailing}"]
+      interval: 5s
+      timeout: 4s
+      retries: 12
+
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      # --- required ---
+      DATABASE_URL: postgresql://${POSTGRES_USER:-sailing}:${POSTGRES_PASSWORD:-change-me-in-portainer}@db:5432/${POSTGRES_DB:-sailing}
+      # --- centre config (safe defaults) ---
+      CENTRE_NAME: ${CENTRE_NAME:-Harbour Sailing Centre}
+      CENTRE_LAT: ${CENTRE_LAT:-50.7679}
+      CENTRE_LON: ${CENTRE_LON:--1.2977}
+      CENTRE_TZ: ${CENTRE_TZ:-Europe/London}
+      # Timezone for the container clock (session times, opening hours)
+      TZ: ${CENTRE_TZ:-Europe/London}
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
-  postgres_data:
+  harbour_db:
