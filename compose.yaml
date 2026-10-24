@@ -7,7 +7,7 @@
 
 services:
   db:
-    image: postgres:16-alpine
+    image: ${POSTGRES_IMAGE:-mirror.gcr.io/library/postgres:16-alpine}
     restart: unless-stopped
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-sailing}
@@ -22,7 +22,11 @@ services:
       retries: 12
 
   app:
-    build: .
+    build:
+      context: .
+      args:
+        # Defaults to Google's mirror — override via stack env vars if preferred
+        NODE_IMAGE: ${NODE_IMAGE:-mirror.gcr.io/library/node:20-alpine}
     restart: unless-stopped
     environment:
       # --- required ---
