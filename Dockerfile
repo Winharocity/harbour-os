@@ -1,8 +1,12 @@
-# syntax=docker/dockerfile:1
+# Base images default to Google's Docker Hub mirror (mirror.gcr.io), which has
+# solid IPv4 *and* IPv6 routing — works on hosts where docker.io is unreachable.
+# Override at build time with: --build-arg NODE_IMAGE=node:20-alpine
+ARG NODE_IMAGE=mirror.gcr.io/library/node:20-alpine
 
 # ---------- dependencies ----------
-FROM node:20-alpine AS deps
+FROM ${NODE_IMAGE} AS deps
 WORKDIR /app
+# package-lock.json is optional: `npm ci` when it exists, `npm install` otherwise
 COPY package.json package-lock.json* ./
 RUN if [ -f package-lock.json ]; then \
       npm ci --no-audit --no-fund; \
@@ -11,7 +15,7 @@ RUN if [ -f package-lock.json ]; then \
     fi
 
 # ---------- build ----------
-FROM node:20-alpine AS builder
+FROM ${NODE_IMAGE} AS builder
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
@@ -22,7 +26,7 @@ ENV DATABASE_URL=${DATABASE_URL}
 RUN npm run build
 
 # ---------- runtime ----------
-FROM node:20-alpine AS runner
+FROM ${NODE_IMAGE} AS runner
 WORKDIR /app
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
