@@ -1,67 +1,137 @@
-html, body {
-  margin: 0;
-  padding: 0;
-  min-height: 100%;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #020817;
-  color: #e2e8f0;
+@import "tailwindcss";
+
+@theme {
+  /* Harbour palette */
+  --color-ink: #0a1f2e;
+  --color-ink-2: #10293b;
+  --color-ink-3: #1a3a52;
+  --color-ink-4: #27506e;
+  --color-salt: #f5f2e9;
+  --color-foam: #ece7d9;
+  --color-foam-2: #e2dcc9;
+  --color-line: #d9d2c0;
+  --color-line-dark: #243e54;
+  --color-signal: #e8482b;
+  --color-signal-dark: #c93a21;
+  --color-sea: #0f7c86;
+  --color-tide: #17b0a5;
+  --color-sun: #e8a93d;
+  --color-sky: #7fb8c9;
+  --color-mist: #b9d4dc;
+
+  /* Type */
+  --font-sans: var(--font-archivo), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex), ui-monospace, "SF Mono", monospace;
 }
 
-* {
-  box-sizing: border-box;
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  display: grid;
-  place-items: center;
-  min-height: 100vh;
+  background-color: var(--color-salt);
+  color: var(--color-ink);
+  /* subtle "chart paper" dot grid */
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(10, 31, 46, 0.07) 1px,
+    transparent 0
+  );
+  background-size: 22px 22px;
+  -webkit-font-smoothing: antialiased;
 }
 
-.page-shell {
-  width: min(960px, 100%);
-  padding: 2rem;
+::selection {
+  background: var(--color-sun);
+  color: var(--color-ink);
 }
 
-.hero-card {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 118, 110, 0.3));
-  border: 1px solid rgba(148, 163, 184, 0.25);
-  border-radius: 24px;
-  padding: 3rem;
-  box-shadow: 0 20px 50px rgba(15, 118, 110, 0.16);
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: var(--color-line);
+  border-radius: 8px;
+  border: 2px solid var(--color-salt);
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
 }
 
-.eyebrow {
-  margin: 0 0 1rem;
+/* ------- shared micro-patterns ------- */
+
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
-  letter-spacing: 0.12em;
-  font-size: 0.75rem;
-  color: #67e8f9;
+  font-weight: 500;
 }
 
-h1 {
-  margin: 0;
-  font-size: clamp(2.5rem, 4vw, 4.5rem);
-  line-height: 1.05;
+.card {
+  background: #fffdf6;
+  border: 1px solid var(--color-line);
+  border-radius: 1rem;
+  box-shadow:
+    0 1px 0 rgba(10, 31, 46, 0.04),
+    0 12px 32px -18px rgba(10, 31, 46, 0.18);
 }
 
-.subtitle {
-  margin-top: 1rem;
-  max-width: 48rem;
-  font-size: 1.1rem;
-  color: #cbd5e1;
+.card-dark {
+  background: linear-gradient(150deg, var(--color-ink-2), var(--color-ink) 65%);
+  border: 1px solid var(--color-line-dark);
+  border-radius: 1rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 24px 48px -24px rgba(10, 31, 46, 0.55);
 }
 
-.pill-row {
-  margin-top: 2rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.75rem;
+.hairline-t {
+  border-top: 1px dashed rgba(255, 255, 255, 0.14);
 }
 
-.pill-row span {
-  padding: 0.55rem 0.9rem;
-  border-radius: 999px;
-  background: rgba(56, 189, 248, 0.12);
-  border: 1px solid rgba(103, 232, 249, 0.4);
-  color: #a5f3fc;
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+input, select, textarea {
+  outline: none;
+}
+
+.field {
+  width: 100%;
+  border-radius: 0.625rem;
+  border: 1px solid var(--color-line);
+  background: rgba(255, 255, 255, 0.75);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.field:focus {
+  border-color: var(--color-sea);
+  box-shadow: 0 0 0 3px rgba(15, 124, 134, 0.18);
+}
+select.field {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%230a1f2e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.6rem center;
+  padding-right: 2rem;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.pulse-soft {
+  animation: pulse-soft 2.4s ease-in-out infinite;
+}
+
+@keyframes drift {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.wave-drift {
+  animation: drift 14s linear infinite;
 }
