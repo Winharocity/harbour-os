@@ -158,6 +158,7 @@ docker exec $(docker ps -qf name=harbour-os-db) \
 
 | Symptom | Likely cause / fix |
 | --- | --- |
+| Build fails with `failed to fetch anonymous token` / `network is unreachable` to `auth.docker.io` | Base images already default to Google's IPv4/IPv6-friendly mirror (`mirror.gcr.io`) so **redeploy with the latest commit** — no IPv6 disabling required. If you'd rather use Docker Hub directly, set stack env vars `NODE_IMAGE=node:20-alpine` and `POSTGRES_IMAGE=postgres:16-alpine`. |
 | App logs repeat `waiting for database…` | DB still starting (first boot) — give it a minute. Persistent? Check `POSTGRES_PASSWORD` didn't change after first deploy (the volume keeps the old one; reset the volume or match the old password). |
 | Weather panel shows "unavailable" | Host has no outbound internet, or `CENTRE_LAT`/`CENTRE_LON` are wrong. Weather needs access to `api.open-meteo.com`. |
 | Build step runs out of memory | Pre-build the image somewhere stronger (§6). |
